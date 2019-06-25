@@ -1,0 +1,1000 @@
+﻿<UserControl x:Class="Panacea.Modules.Keyboard.VirtualKeyboard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Panacea.Modules.Keyboard"
+             xmlns:my="clr-namespace:Panacea.Modules.Keyboard.Controls"
+             xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="#111">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+                <Border x:Name="PART_ContentHost" Focusable="False" />
+            </ControlTemplate>
+            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="32" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    x:Name="Border"
+                                    Grid.ColumnSpan="2"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="0" />
+                                <Border
+                                    Grid.Column="0"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="10"
+                                    CornerRadius="0" />
+                                <Path
+                                    x:Name="Arrow"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="M 0 0 L 8 12 L 16 0 Z"
+                                    Fill="{TemplateBinding Foreground}"
+                                    Stroke="{TemplateBinding Foreground}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                    <Setter Property="Foreground" Value="Gray" />
+                                    <Setter TargetName="Arrow" Property="Fill" Value="Gray" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="{x:Type ComboBoxItem}">
+                <Setter Property="SnapsToDevicePixels" Value="true" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBoxItem">
+                            <Border
+                                Name="Border"
+                                Margin="0"
+                                Padding="10"
+                                Background="{x:Null}"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="0">
+
+                                <TextBlock FontSize="{TemplateBinding FontSize}">
+                                    <ContentPresenter />
+                                </TextBlock>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsHighlighted" Value="true">
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                    <Setter TargetName="Border" Property="Background" Value="#2aa1d3" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="{x:Type ComboBox}">
+                <Setter Property="Foreground" Value="{DynamicResource TextBlockForegroundColor}" />
+                <Setter Property="BorderBrush" Value="Gray" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="SnapsToDevicePixels" Value="true" />
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+                <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                <Setter Property="MinWidth" Value="50" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <ToggleButton
+                                    Name="ToggleButton"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    ClickMode="Press"
+                                    Focusable="false"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Style="{StaticResource ComboBoxToggleButton}" />
+                                <ContentPresenter
+                                    Name="ContentSite"
+                                    Margin="3,3,32,3"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding SelectionBoxItem}"
+                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                    IsHitTestVisible="False" />
+                                <TextBox
+                                    x:Name="PART_EditableTextBox"
+                                    Margin="3"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Focusable="True"
+                                    IsReadOnly="{TemplateBinding IsReadOnly}"
+                                    Style="{x:Null}"
+                                    Template="{StaticResource ComboBoxTextBox}"
+                                    Visibility="Hidden" />
+                                <Popup
+                                    Name="Popup"
+                                    AllowsTransparency="True"
+                                    Focusable="False"
+                                    IsOpen="{TemplateBinding IsDropDownOpen}"
+                                    Placement="Bottom"
+                                    PopupAnimation="Fade">
+                                    <Grid
+                                        Name="DropDown"
+                                        MinWidth="{TemplateBinding ActualWidth}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        SnapsToDevicePixels="True">
+                                        <Border
+                                            x:Name="DropDownBorder"
+                                            Background="White"
+                                            BorderBrush="Gray"
+                                            BorderThickness="2" />
+                                        <ScrollViewer
+                                            Margin="4,6,4,6"
+                                            PanningMode="VerticalOnly"
+                                            SnapsToDevicePixels="True">
+                                            <VirtualizingStackPanel
+                                                IsItemsHost="True"
+                                                IsVirtualizing="True"
+                                                KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Popup>
+
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="HasItems" Value="false">
+                                    <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95" />
+                                </Trigger>
+                                <Trigger Property="IsGrouping" Value="true">
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                                </Trigger>
+                                <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                    <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0" />
+                                    <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0" />
+                                </Trigger>
+                                <Trigger Property="IsEditable" Value="true">
+                                    <Setter Property="IsTabStop" Value="false" />
+                                    <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid
+        Name="grid"
+        Margin="4"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="18*" />
+            <ColumnDefinition Width="4.3*" />
+        </Grid.ColumnDefinitions>
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Name="first">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+                <!--<my:KBButton Margin="1"  BorderThickness="0" Caption="ESC" Code="1"  VirtualKey="ESCAPE" />-->
+                <!--<my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="'"
+                    ShiftCaption="~"
+                    VirtualKey="Oem1" />-->
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="'"
+                    ShiftCaption="~"
+                    VirtualKey="Oemtilde" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="1"
+                    ShiftCaption="!"
+                    VirtualKey="D1" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="2"
+                    ShiftCaption="@"
+                    VirtualKey="D2" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="3"
+                    ShiftCaption="#"
+                    VirtualKey="D3" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="5"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="4"
+                    ShiftCaption="$"
+                    VirtualKey="D4" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="6"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="5"
+                    ShiftCaption="%"
+                    VirtualKey="D5" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="7"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="6"
+                    ShiftCaption="^"
+                    VirtualKey="D6" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="8"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="7"
+                    ShiftCaption="&amp;"
+                    VirtualKey="D7" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="9"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="8"
+                    ShiftCaption="*"
+                    VirtualKey="D8" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="10"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="9"
+                    ShiftCaption="("
+                    VirtualKey="D9" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="11"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="0"
+                    ShiftCaption=")"
+                    VirtualKey="D0" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="12"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="-"
+                    ShiftCaption="_"
+                    VirtualKey="OemMinus" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="13"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="="
+                    ShiftCaption="+"
+                    VirtualKey="Oemplus" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="14"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption="backspace"
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/backspace.png"
+                    ShiftCaption=""
+                    VirtualKey="Back" />
+            </Grid>
+
+
+            <Grid Name="second" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.3*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <!--<my:KBButton Margin="1"  BorderThickness="0" Caption="ESC" Code="1"  VirtualKey="ESCAPE" />-->
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption="Tab"
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/tab.png"
+                    ShiftCaption=""
+                    VirtualKey="Tab" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="q"
+                    ShiftCaption="Q"
+                    VirtualKey="Q" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="w"
+                    ShiftCaption="W"
+                    VirtualKey="W" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="e"
+                    ShiftCaption="E"
+                    VirtualKey="E" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="r"
+                    ShiftCaption="R"
+                    VirtualKey="R" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="5"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="t"
+                    ShiftCaption="T"
+                    VirtualKey="T" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="6"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="y"
+                    ShiftCaption="Y"
+                    VirtualKey="Y" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="7"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="u"
+                    ShiftCaption="U"
+                    VirtualKey="U" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="8"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="i"
+                    ShiftCaption="I"
+                    VirtualKey="I" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="9"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="o"
+                    ShiftCaption="O"
+                    VirtualKey="O" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="10"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="p"
+                    ShiftCaption="P"
+                    VirtualKey="P" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="11"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="["
+                    ShiftCaption="{}{"
+                    VirtualKey="OemOpenBrackets" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="12"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="]"
+                    ShiftCaption="{}}"
+                    VirtualKey="Oem6" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="13"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="\"
+                    ShiftCaption="|"
+                    VirtualKey="Oem5" />
+
+
+            </Grid>
+
+
+            <Grid Name="third" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.6*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1.8*" />
+
+                </Grid.ColumnDefinitions>
+
+                <!--<my:KBButton Margin="1"  BorderThickness="0" Caption="ESC" Code="1"  VirtualKey="ESCAPE" />-->
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption="CAPS"
+                    Repeat="False"
+                    ShiftCaption=""
+                    VirtualKey="Capital" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="a"
+                    ShiftCaption="A"
+                    VirtualKey="A" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="s"
+                    ShiftCaption="S"
+                    VirtualKey="S" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="d"
+                    ShiftCaption="D"
+                    VirtualKey="D" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="f"
+                    ShiftCaption="F"
+                    VirtualKey="F" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="5"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="g"
+                    ShiftCaption="G"
+                    VirtualKey="G" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="6"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="h"
+                    ShiftCaption="H"
+                    VirtualKey="H" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="7"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="j"
+                    ShiftCaption="J"
+                    VirtualKey="J" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="8"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="k"
+                    ShiftCaption="K"
+                    VirtualKey="K" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="9"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="l"
+                    ShiftCaption="L"
+                    VirtualKey="L" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="10"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption=";"
+                    ShiftCaption=":"
+                    VirtualKey="Oem1" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="11"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="'"
+                    ShiftCaption="'"
+                    VirtualKey="Oem7" />
+
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="13"
+                    Margin="1,1,1,1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption=""
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/return.png"
+                    ShiftCaption=""
+                    VirtualKey="Return" />
+
+            </Grid>
+
+            <Grid Name="fourth" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2.2*" />
+
+                </Grid.ColumnDefinitions>
+
+                <!--<my:KBButton Margin="1"  BorderThickness="0" Caption="ESC" Code="1"  VirtualKey="ESCAPE" />-->
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption="Shift"
+                    FakeToggle="True"
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/shift.png"
+                    Repeat="False"
+                    ShiftCaption=""
+                    VirtualKey="LShiftKey" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="\"
+                    ShiftCaption="|"
+                    VirtualKey="OemBackslash" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="z"
+                    ShiftCaption="Z"
+                    VirtualKey="Z" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="x"
+                    ShiftCaption="X"
+                    VirtualKey="X" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="c"
+                    ShiftCaption="C"
+                    VirtualKey="C" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="5"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="v"
+                    ShiftCaption="V"
+                    VirtualKey="V" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="6"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="b"
+                    ShiftCaption="B"
+                    VirtualKey="B" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="7"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="n"
+                    ShiftCaption="N"
+                    VirtualKey="N" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="8"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="m"
+                    ShiftCaption="M"
+                    VirtualKey="M" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="9"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption=","
+                    ShiftCaption="&lt;"
+                    VirtualKey="Oemcomma" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="10"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="."
+                    ShiftCaption="&gt;"
+                    VirtualKey="OemPeriod" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="11"
+                    Margin="1"
+                    BorderThickness="0"
+                    CapsLikeShift="false"
+                    Caption="/"
+                    ShiftCaption="?"
+                    VirtualKey="OemQuestion" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="12"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption="Shift"
+                    FakeToggle="true"
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/shift.png"
+                    Repeat="False"
+                    ShiftCaption=""
+                    VirtualKey="RShiftKey" />
+
+
+            </Grid>
+
+
+            <Grid Name="fifth" Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*" />
+
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="1.5*" />
+
+
+
+                </Grid.ColumnDefinitions>
+                <ComboBox
+                    Name="languages"
+                    Grid.Row="0"
+                    Margin="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Focusable="false"
+                    FontSize="16"
+                    IsEditable="False" />
+                <!--<my:KBButton Margin="1"  BorderThickness="0" Caption="ESC" Code="1"  VirtualKey="ESCAPE" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="Ctrl"
+                    ShiftCaption=""
+                    VirtualKey="LCONTROL"
+                    Visibility="Collapsed" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption=""
+                    ShiftCaption=""
+                    VirtualKey="NONAME"
+                    Visibility="Collapsed" />-->
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption="SPACE"
+                    Focusable="False"
+                    ShiftCaption=""
+                    VirtualKey="Space" />
+
+                <my:KbButton
+                    x:Name="altgr"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption="Alt Gr"
+                    FakeToggle="True"
+                    Repeat="False"
+                    ShiftCaption=""
+                    VirtualKey="NoName" />
+                <my:KbButton
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="1"
+                    BorderThickness="0"
+                    Caption=""
+                    ShiftCaption=""
+                    VirtualKey="NoName"
+                    Visibility="Collapsed" />
+                <Button
+                    Name="btnHide"
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="1"
+                    Background="{DynamicResource KeyboardButtonBackground}"
+                    BorderThickness="0"
+                    Content="{multilinguality:Translate 'Hide',
+                                                        'core'}"
+                    FontSize="{DynamicResource FontSize-Normal}"
+                    Foreground="White" />
+            </Grid>
+        </Grid>
+        <Grid
+            Grid.Column="1"
+            Margin="5,0,0,0"
+            HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <my:KbButton
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="1"
+                Altable="False"
+                BorderThickness="0"
+                Caption="Ins"
+                ShiftCaption=""
+                VirtualKey="Insert" />
+            <my:KbButton
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="1"
+                Altable="False"
+                BorderThickness="0"
+                Caption="Home"
+                ShiftCaption=""
+                VirtualKey="Home" />
+            <my:KbButton
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="1"
+                Altable="False"
+                BorderThickness="0"
+                Caption="Pg Up"
+                ShiftCaption=""
+                VirtualKey="Prior" />
+            <my:KbButton
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="1"
+                Altable="False"
+                BorderThickness="0"
+                Caption="Del"
+                ShiftCaption=""
+                VirtualKey="Delete" />
+            <my:KbButton
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="1"
+                Altable="False"
+                BorderThickness="0"
+                Caption="End"
+                ShiftCaption=""
+                VirtualKey="End" />
+            <my:KbButton
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="1"
+                Altable="False"
+                BorderThickness="0"
+                Caption="Pg Dn"
+                ShiftCaption=""
+                VirtualKey="Next" />
+            <Grid
+                Grid.Row="2"
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <my:KbButton
+                    Grid.Row="2"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption=""
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/up_arrow.png"
+                    ShiftCaption=""
+                    VirtualKey="Up" />
+                <my:KbButton
+                    Grid.Row="3"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption=""
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/left_arrow.png"
+                    ShiftCaption=""
+                    VirtualKey="Left" />
+                <my:KbButton
+                    Grid.Row="4"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption=""
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/down_arrow.png"
+                    ShiftCaption=""
+                    VirtualKey="Down" />
+                <my:KbButton
+                    Grid.Row="3"
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    Margin="1"
+                    Altable="False"
+                    BorderThickness="0"
+                    Caption=""
+                    Image="pack://application:,,,/Panacea.Modules.Keyboard;component/Images/right_arrow.png"
+                    ShiftCaption=""
+                    VirtualKey="Right" />
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+</UserControl>
