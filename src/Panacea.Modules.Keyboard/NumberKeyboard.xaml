@@ -19,7 +19,8 @@
     <UniformGrid
         HorizontalAlignment="Center"
         VerticalAlignment="Stretch"
-        Columns="3">
+        Columns="3"
+        TextElement.FontSize="{DynamicResource FontSize-Large}">
 
         <Button
             Name="b1"
@@ -31,7 +32,6 @@
             Click="b1_Click"
             Content="1"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b2"
@@ -43,7 +43,6 @@
             Click="b1_Click"
             Content="2"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b3"
@@ -55,7 +54,6 @@
             Click="b1_Click"
             Content="3"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b4"
@@ -67,7 +65,6 @@
             Click="b1_Click"
             Content="4"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b5"
@@ -79,7 +76,6 @@
             Click="b1_Click"
             Content="5"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b6"
@@ -91,7 +87,6 @@
             Click="b1_Click"
             Content="6"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b7"
@@ -103,7 +98,6 @@
             Click="b1_Click"
             Content="7"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b8"
@@ -115,7 +109,6 @@
             Click="b1_Click"
             Content="8"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="b9"
@@ -127,10 +120,9 @@
             Click="b1_Click"
             Content="9"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
+            
             Foreground="White" />
         <Button
-            FontSize="{DynamicResource FontSize-Normal}"
             Name="btnHide"
             Grid.Row="0"
             Grid.ColumnSpan="3"
@@ -153,7 +145,6 @@
             Click="b1_Click"
             Content="0"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
         <Button
             Name="bBack"
@@ -165,7 +156,6 @@
             Click="b1_Click"
             Content="←"
             Focusable="false"
-            FontSize="{DynamicResource FontSize-Normal}"
             Foreground="White" />
     </UniformGrid>
 </UserControl>

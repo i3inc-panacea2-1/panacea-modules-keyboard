@@ -66,7 +66,7 @@
                         CommandParameter="{Binding Number}"
                         Content="{Binding Label}"
                         Focusable="False"
-                        FontSize="{DynamicResource FontSize-Normal}"
+                        FontSize="{DynamicResource FontSize-Large}"
                         FontWeight="Normal"
                         Foreground="White" />
                 </DataTemplate>
