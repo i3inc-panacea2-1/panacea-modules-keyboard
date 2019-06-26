@@ -1,6 +1,7 @@
 ﻿using Panacea.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace Panacea.Modules.Keyboard
             var source = HwndSource.FromHwnd(h.Handle);
             source.AddHook(new HwndSourceHook(WndProc));
             var sc = Screen.PrimaryScreen;
-            Height = sc.WorkingArea.Height / 4;
+            Height = sc.WorkingArea.Height / 3.2;
             Width = sc.WorkingArea.Width;
             Left = sc.WorkingArea.Left;
             Top = sc.WorkingArea.Bottom - Height;
@@ -44,6 +45,11 @@ namespace Panacea.Modules.Keyboard
                 return new IntPtr(MA_NOACTIVATE);
             }
             return IntPtr.Zero;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }

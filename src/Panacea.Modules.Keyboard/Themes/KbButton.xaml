@@ -1,10 +1,11 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Panacea.Modules.Keyboard.Controls">
+    xmlns:local="clr-namespace:Panacea.Modules.Keyboard.Controls"
+    xmlns:controls="clr-namespace:Panacea.Controls;assembly=Panacea.Controls">
     <Style TargetType="{x:Type local:KbButton}">
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Background" Value="{DynamicResource KeyboardButtonBackground}" />
+
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="ButtonBackground" Value="Transparent" />
 
@@ -17,9 +18,10 @@
                                 BorderBrush="#ffffffff"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="0">
-                                <Viewbox Stretch="Uniform">
-                                    <Grid>
-                                        <Border
+                                <controls:RippleEffectDecorator>
+                                    <Viewbox Stretch="Uniform">
+                                        <Grid>
+                                            <Border
                                             Name="light"
                                             Height="6"
                                             Margin="10"
@@ -28,23 +30,23 @@
                                             Background="yellow"
                                             CornerRadius="4"
                                             Opacity="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LightOpacity}">
-                                            <Border.Effect>
-                                                <DropShadowEffect
+                                                <Border.Effect>
+                                                    <DropShadowEffect
                                                     BlurRadius="14"
                                                     Opacity="0.7"
                                                     ShadowDepth="0"
                                                     Color="LightGreen" />
-                                            </Border.Effect>
-                                        </Border>
+                                                </Border.Effect>
+                                            </Border>
 
-                                        <StackPanel
+                                            <StackPanel
                                             Margin="0,10,0,3"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Bottom"
                                             Orientation="Horizontal">
-                                            <Image Height="40" Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Image}" />
-                                            <Grid>
-                                                <TextBlock
+                                                <controls:MaterialIcon Height="40" Icon="{TemplateBinding Icon}" Foreground="White" />
+                                                <Grid>
+                                                    <TextBlock
                                                     Name="altcaption"
                                                     Padding="0"
                                                     FontSize="32"
@@ -52,21 +54,21 @@
                                                     Foreground="White"
                                                     LineHeight="8"
                                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=AltCaption, Mode=TwoWay}"
-                                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=AltCaptionVisibility, Mode=OneWay}" />
-                                                <TextBlock
+                                                    Visibility="{TemplateBinding AltCaptionVisibility}" />
+                                                    <TextBlock
                                                     Name="caption"
-                                                    Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CaptionMargin, Mode=OneWay}"
+                                                    Margin="{TemplateBinding CaptionMargin}"
                                                     Padding="0"
-                                                    VerticalAlignment="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=VerticalAlignment, Mode=OneWay}"
+                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                                     FontSize="32"
                                                     FontWeight="Normal"
                                                     Foreground="White"
                                                     LineHeight="8"
                                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Caption, Mode=TwoWay}"
                                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CaptionVisibility, Mode=OneWay}" />
-                                            </Grid>
-                                        </StackPanel>
-                                        <TextBlock
+                                                </Grid>
+                                            </StackPanel>
+                                            <TextBlock
                                             Name="shiftCaption"
                                             Margin="30,-2,4,20"
                                             Padding="2"
@@ -78,8 +80,9 @@
                                             Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShiftCaption, Mode=TwoWay}"
                                             Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShiftCaptionVisibility, Mode=OneWay}" />
 
-                                    </Grid>
-                                </Viewbox>
+                                        </Grid>
+                                    </Viewbox>
+                                </controls:RippleEffectDecorator>
                             </Border>
                         </Border>
                     </Border>

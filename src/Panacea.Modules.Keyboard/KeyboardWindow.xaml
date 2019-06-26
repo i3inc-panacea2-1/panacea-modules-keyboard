@@ -1,18 +1,18 @@
 ﻿<controls:NonFocusableWindow
-    xmlns:controls="clr-namespace:Panacea.Controls;assembly=Panacea.Controls"
     x:Class="Panacea.Modules.Keyboard.KeyboardWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Panacea.Controls;assembly=Panacea.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Panacea.Modules.Keyboard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="KeyboardWindow"
     Width="800"
     Height="450"
-    mc:Ignorable="d"
+    controls:RippleEffectDecorator.HighlightBackground="#44ffffff"
+    Background="Black"
+    ResizeMode="NoResize"
     ShowActivated="False"
-    WindowStyle="None"
     ShowInTaskbar="False"
-    ResizeMode="NoResize">
-    <local:VirtualKeyboard />
-</controls:NonFocusableWindow>
+    WindowStyle="None"
+    mc:Ignorable="d" />

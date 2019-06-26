@@ -40,6 +40,19 @@ namespace Panacea.Modules.Keyboard.Controls
                     FrameworkPropertyMetadataOptions.AffectsRender |
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (dep, val) => { }));
 
+
+
+        public string Icon
+        {
+            get { return (string)GetValue(IconProperty); }
+            set { SetValue(IconProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Icon.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IconProperty =
+            DependencyProperty.Register("Icon", typeof(string), typeof(KbButton), new PropertyMetadata(null));
+
+
         // .NET Property wrapper
 
         public static readonly DependencyProperty ButtonBackgroundProperty =
@@ -98,15 +111,12 @@ namespace Panacea.Modules.Keyboard.Controls
         // .NET Property wrapper
 
 
-        public static DependencyProperty ImageProperty =
-            DependencyProperty.Register("Image", typeof(ImageSource), typeof(KbButton),
-                new FrameworkPropertyMetadata(null));
-
-        protected static DependencyProperty CaptionMarginProperty =
+       
+        public static DependencyProperty CaptionMarginProperty =
             DependencyProperty.Register("CaptionMargin", typeof(Thickness), typeof(KbButton),
                 new FrameworkPropertyMetadata(null));
 
-        protected static DependencyProperty CaptionAlignmentProperty =
+        public static DependencyProperty CaptionAlignmentProperty =
             DependencyProperty.Register("CaptionAlignment", typeof(VerticalAlignment), typeof(KbButton),
                 new FrameworkPropertyMetadata(null));
 
@@ -165,12 +175,7 @@ namespace Panacea.Modules.Keyboard.Controls
         }
 
         // .NET Property wrapper
-        public ImageSource Image
-        {
-            get { return (ImageSource)GetValue(ImageProperty); }
-            set { SetValue(ImageProperty, value); }
-        }
-
+       
         public String Caption
         {
             get { return (String)GetValue(CaptionProperty); }
