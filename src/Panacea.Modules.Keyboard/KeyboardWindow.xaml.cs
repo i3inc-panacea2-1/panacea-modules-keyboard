@@ -23,6 +23,19 @@ namespace Panacea.Modules.Keyboard
     /// </summary>
     public partial class KeyboardWindow : NonFocusableWindow
     {
+
+
+        public FrameworkElement Keyboard
+        {
+            get { return (FrameworkElement)GetValue(KeyboardProperty); }
+            set { SetValue(KeyboardProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Keyboard.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty KeyboardProperty =
+            DependencyProperty.Register("Keyboard", typeof(FrameworkElement), typeof(KeyboardWindow), new PropertyMetadata(null));
+
+
         public KeyboardWindow()
         {
             InitializeComponent();
@@ -30,12 +43,31 @@ namespace Panacea.Modules.Keyboard
             h.EnsureHandle();
             var source = HwndSource.FromHwnd(h.Handle);
             source.AddHook(new HwndSourceHook(WndProc));
-            var sc = Screen.PrimaryScreen;
-            Height = sc.WorkingArea.Height / 3.2;
-            Width = sc.WorkingArea.Width;
-            Left = sc.WorkingArea.Left;
-            Top = sc.WorkingArea.Bottom - Height;
+            Loaded += KeyboardWindow_Loaded;
+            SizeChanged += KeyboardWindow_SizeChanged;
+           
         }
+
+        private void KeyboardWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            
+        }
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            //await Task.Delay(10);
+            var sc = Screen.PrimaryScreen;
+
+            Width = sc.WorkingArea.Width;
+            Height = sc.WorkingArea.Height / 3.2;
+            SetValue(WidthProperty, Width);
+            Left = sc.WorkingArea.Left;
+            Top = sc.WorkingArea.Bottom - ActualHeight;
+        }
+        private void KeyboardWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+          
+        }
+
         private const int WM_MOUSEACTIVATE = 0x0021, MA_NOACTIVATE = 0x0003;
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
@@ -45,6 +77,11 @@ namespace Panacea.Modules.Keyboard
                 return new IntPtr(MA_NOACTIVATE);
             }
             return IntPtr.Zero;
+        }
+
+        private void BtnHide_Click(object sender, RoutedEventArgs e)
+        {
+            Hide();
         }
 
         protected override void OnClosing(CancelEventArgs e)

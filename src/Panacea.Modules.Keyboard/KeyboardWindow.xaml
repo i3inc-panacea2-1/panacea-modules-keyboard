@@ -6,13 +6,41 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Panacea.Modules.Keyboard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
     Title="KeyboardWindow"
-    Width="800"
-    Height="450"
     controls:RippleEffectDecorator.HighlightBackground="#44ffffff"
-    Background="Black"
     ResizeMode="NoResize"
     ShowActivated="False"
     ShowInTaskbar="False"
+    Topmost="True"
+    Background="#111"
     WindowStyle="None"
-    mc:Ignorable="d" />
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="KeyboardButtonBackground" Color="#222222" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource AncestorType=local:KeyboardWindow}, Path=Keyboard}" />
+        <Button
+            Name="btnHide"
+            Grid.Row="0"
+            Margin="1"
+            Background="{DynamicResource KeyboardButtonBackground}"
+            Click="BtnHide_Click"
+            Focusable="False"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Content="{multilinguality:Translate 'Hide', 'Keyboard'}"
+            controls:Material.Icon="keyboard_hide"
+            Foreground="White"
+            FontSize="{DynamicResource FontSize-Normal}">
+            
+        </Button>
+    </Grid>
+</controls:NonFocusableWindow>

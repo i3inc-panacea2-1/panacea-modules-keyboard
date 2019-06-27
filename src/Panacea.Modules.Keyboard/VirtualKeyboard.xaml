@@ -7,9 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
     xmlns:my="clr-namespace:Panacea.Modules.Keyboard.Controls"
-    d:DesignHeight="350"
+    d:DesignHeight="550"
     d:DesignWidth="1360"
-    Background="#111"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -197,11 +196,11 @@
     <Grid
         Name="grid"
         Margin="4"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="18*" />
-            <ColumnDefinition Width="4.0*" />
+            <ColumnDefinition Width="3.0*" />
         </Grid.ColumnDefinitions>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -853,17 +852,6 @@
                     ShiftCaption=""
                     VirtualKey="NoName"
                     Visibility="Collapsed" />
-                <Button
-                    Name="btnHide"
-                    Grid.Row="0"
-                    Grid.Column="4"
-                    Margin="1"
-                    Background="{DynamicResource KeyboardButtonBackground}"
-                    BorderThickness="0"
-                    Content="{multilinguality:Translate 'Hide',
-                                                        'core'}"
-                    FontSize="{DynamicResource FontSize-Normal}"
-                    Foreground="White" />
             </Grid>
         </Grid>
         <Grid

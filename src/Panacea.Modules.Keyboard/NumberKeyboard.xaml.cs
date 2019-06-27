@@ -26,9 +26,7 @@ namespace Panacea.Modules.Keyboard
             InitializeComponent();
         }
 
-        public event EventHandler<string> KeyPressed;
-        public event EventHandler Close;
-
+       
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
 
@@ -62,52 +60,8 @@ namespace Panacea.Modules.Keyboard
                 i++;
             }*/
         }
-        public void BindTo(params object[] controls)
-        {
-            KeyPressed += (oo, ee) =>
-            {
-                RoutedEvent routedEvent = TextCompositionManager.TextInputEvent;
-                var k = new KeyConverter();
-                var mykey = Key.Back;
-                if (oo != bBack)
-                    mykey = (Key)k.ConvertFromString("D" + ee);
-                foreach (object o in controls)
-                {
-                    if (mykey != Key.Back)
-                    {
-                        (o as IInputElement).RaiseEvent(new TextCompositionEventArgs(
-                            InputManager.Current.PrimaryKeyboardDevice,
-                            new TextComposition(InputManager.Current, o as IInputElement, ee))
-                        {
-                            RoutedEvent = routedEvent
-                        }
-                            );
-                    }
-                    else
-                    {
-                        RoutedEvent routedEvent2 = System.Windows.Input.Keyboard.KeyDownEvent; // Event to send
-                        if ((o as Control).IsFocused)
-                        {
-                            (o as IInputElement).RaiseEvent(
-                                new KeyEventArgs(
-                                    System.Windows.Input.Keyboard.PrimaryDevice,
-                                    PresentationSource.FromVisual((o as Visual)),
-                                    0,
-                                    mykey)
-                                { RoutedEvent = routedEvent2 }
-                                );
-                        }
-                    }
-                }
-
-            };
-        }
-
-        private void BtnHide_OnClick(object sender, RoutedEventArgs e)
-        {
-            Close?.Invoke(this, null);
-        }
-
+  
+      
         private void b1_Click(object sender, RoutedEventArgs e)
         {
             var b = (Button)sender;

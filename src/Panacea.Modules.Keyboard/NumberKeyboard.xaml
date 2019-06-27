@@ -122,19 +122,7 @@
             Focusable="false"
             
             Foreground="White" />
-        <Button
-            Name="btnHide"
-            Grid.Row="0"
-            Grid.ColumnSpan="3"
-            Margin="2"
-            HorizontalAlignment="Stretch"
-            Background="Transparent"
-            Click="BtnHide_OnClick"
-            
-            Focusable="False" >
-            <controls:MaterialIcon Icon="keyboard_hide"
-                                   Foreground="White"/>
-        </Button>
+        <TextBlock/>
         <Button
             Name="b0"
             Grid.Row="3"

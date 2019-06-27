@@ -9,39 +9,19 @@
     xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Background="#111"
+    
     mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="KeyboardButtonBackground" Color="#222222" />
     </UserControl.Resources>
-    <Grid>
+    <Grid VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-
-        </Grid.RowDefinitions>
-        <Button
-            Name="btnHide"
-            Grid.Row="0"
-            Grid.ColumnSpan="3"
-            Margin="2"
-            HorizontalAlignment="Center"
-            mi:Material.Icon="keyboard_hide"
-            Background="Transparent"
-            Click="BtnHide_OnClick"
-            Content="{multilinguality:Translate 'Hide',
-                                                'Keyboard'}"
-            Focusable="False"
-            FontSize="{DynamicResource FontSize-Normal}"
-            Foreground="White" />
         <Button
             Name="prev"
-            Grid.Row="1"
             Margin="2"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"

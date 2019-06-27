@@ -143,12 +143,6 @@ namespace Panacea.Modules.Keyboard
 
             }
         }
-        public event EventHandler Close;
-        private void BtnHide_OnClick(object sender, RoutedEventArgs e)
-        {
-            Close?.Invoke(this, null);
-            //Host.ThemeManager.HideKeyboard();
-        }
 
         public RelayCommand SelectYearCommand { get; }
 

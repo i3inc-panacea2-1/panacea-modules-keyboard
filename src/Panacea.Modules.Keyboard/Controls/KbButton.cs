@@ -36,9 +36,16 @@ namespace Panacea.Modules.Keyboard.Controls
 
         public static readonly DependencyProperty CaptionProperty =
             DependencyProperty.Register("Caption", typeof(String), typeof(KbButton),
-                new FrameworkPropertyMetadata("T",
+                new FrameworkPropertyMetadata(null,
                     FrameworkPropertyMetadataOptions.AffectsRender |
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (dep, val) => { }));
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (dep, val) =>
+                    {
+                        var self = dep as KbButton;
+                        if (self == null) return;
+                        self.CaptionVisibility = !string.IsNullOrEmpty(val.NewValue?.ToString()) 
+                        ? Visibility.Visible 
+                        : Visibility.Collapsed;
+                    }));
 
 
 
@@ -64,7 +71,7 @@ namespace Panacea.Modules.Keyboard.Controls
 
         public static DependencyProperty ShiftCaptionProperty =
             DependencyProperty.Register("ShiftCaption", typeof(String), typeof(KbButton),
-                new FrameworkPropertyMetadata("T"));
+                new FrameworkPropertyMetadata(""));
 
         // .NET Property wrapper
 
@@ -111,7 +118,7 @@ namespace Panacea.Modules.Keyboard.Controls
         // .NET Property wrapper
 
 
-       
+
         public static DependencyProperty CaptionMarginProperty =
             DependencyProperty.Register("CaptionMargin", typeof(Thickness), typeof(KbButton),
                 new FrameworkPropertyMetadata(null));
@@ -175,7 +182,7 @@ namespace Panacea.Modules.Keyboard.Controls
         }
 
         // .NET Property wrapper
-       
+
         public String Caption
         {
             get { return (String)GetValue(CaptionProperty); }
@@ -465,10 +472,14 @@ namespace Panacea.Modules.Keyboard.Controls
                     {
                         Visibility = System.Windows.Visibility.Visible;
                     }
-                    if (Caption != "")
+                    if (!string.IsNullOrEmpty(Caption))
                     {
                         CaptionVisibility = Visibility.Visible;
                         ShiftCaptionVisibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        CaptionVisibility = Visibility.Collapsed;
                     }
                     AltCaptionVisibility = Visibility.Collapsed;
                 }

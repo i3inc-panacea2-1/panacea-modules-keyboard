@@ -34,25 +34,16 @@ namespace Panacea.Modules.Keyboard
             _kbWindow = new KeyboardWindow();
             _keyboard = new VirtualKeyboard();
             _dateKeyboard = new DateKeyboard();
-            _dateKeyboard.Close += _dateKeyboard_Close;
+            
             _numberKeyboard = new NumberKeyboard();
-            _numberKeyboard.Close += _numberKeyboard_Close;
+            //ShowKeyboard(_keyboard);
+            //return Task.CompletedTask;
             EventManager.RegisterClassHandler(typeof(UIElement), System.Windows.Input.Keyboard.PreviewGotKeyboardFocusEvent,
                 (KeyboardFocusChangedEventHandler)OnPreviewGotKeyboardFocus);
 
-
+           
             //Automation.AddAutomationFocusChangedEventHandler(OnFocusChanged);
             return Task.CompletedTask;
-        }
-
-        private void _dateKeyboard_Close(object sender, EventArgs e)
-        {
-            HideKeyboard();
-        }
-
-        private void _numberKeyboard_Close(object sender, EventArgs e)
-        {
-            HideKeyboard();
         }
 
         private void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -148,7 +139,7 @@ namespace Panacea.Modules.Keyboard
             Debug.WriteLine("Showing");
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                _kbWindow.Content = content;
+                _kbWindow.Keyboard = content;
                 _kbWindow.Show();
             }));
         }
