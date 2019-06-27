@@ -1,4 +1,7 @@
-﻿using Panacea.Modularity;
+﻿using Panacea.Core;
+using Panacea.Modularity;
+using Panacea.Modularity.UiManager;
+using Panacea.Modules.Keyboard.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +22,14 @@ namespace Panacea.Modules.Keyboard
         VirtualKeyboard _keyboard;
         DateKeyboard _dateKeyboard;
         NumberKeyboard _numberKeyboard;
+        NavigationButtonViewModel _navButton;
+        private readonly PanaceaServices _core;
+
+        public KeyboardPlugin(PanaceaServices core)
+        {
+            _core = core;
+        }
+
         public Task BeginInit()
         {
             return Task.CompletedTask;
@@ -34,8 +45,14 @@ namespace Panacea.Modules.Keyboard
             _kbWindow = new KeyboardWindow();
             _keyboard = new VirtualKeyboard();
             _dateKeyboard = new DateKeyboard();
-            
             _numberKeyboard = new NumberKeyboard();
+            if(_core.TryGetUiManager(out IUiManager ui))
+            {
+                _navButton = new NavigationButtonViewModel(this);
+                ui.AddNavigationBarControl(_navButton);
+            }
+           
+
             //ShowKeyboard(_keyboard);
             //return Task.CompletedTask;
             EventManager.RegisterClassHandler(typeof(UIElement), System.Windows.Input.Keyboard.PreviewGotKeyboardFocusEvent,
@@ -134,7 +151,21 @@ namespace Panacea.Modules.Keyboard
 
         }
 
-        void ShowKeyboard(FrameworkElement content)
+        internal void ToggleKeyboard()
+        {
+            if (IsKeyboardOpen)
+            {
+                HideKeyboard();
+            }
+            else
+            {
+                ShowKeyboard(_keyboard);
+            }
+        }
+
+        internal bool IsKeyboardOpen => _kbWindow.IsVisible;
+
+        internal void ShowKeyboard(FrameworkElement content)
         {
             Debug.WriteLine("Showing");
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -144,7 +175,7 @@ namespace Panacea.Modules.Keyboard
             }));
         }
 
-        void HideKeyboard()
+        internal void HideKeyboard()
         {
             Debug.WriteLine("Hiding");
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
