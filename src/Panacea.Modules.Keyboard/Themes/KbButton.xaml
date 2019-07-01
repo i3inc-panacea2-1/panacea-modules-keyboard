@@ -20,12 +20,12 @@
                                 <Grid Margin="{TemplateBinding Padding}">
                                     <Border
                                         Name="light"
-                                        Height="6"
-                                        Margin="10"
+                                        Height="3"
+                                        Margin="10 5 10 0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         Background="yellow"
-                                        CornerRadius="4"
+                                        CornerRadius="2"
                                         Opacity="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LightOpacity}">
                                         <Border.Effect>
                                             <DropShadowEffect

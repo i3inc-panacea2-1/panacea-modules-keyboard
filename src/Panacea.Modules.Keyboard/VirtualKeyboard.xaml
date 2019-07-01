@@ -17,10 +17,11 @@
             </ControlTemplate>
             <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
                 <Setter Property="FontSize" Value="{DynamicResource FontSize-Normal}" />
+                <Setter Property="Background" Value="#111"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
-                            <Grid>
+                            <Grid Background="{TemplateBinding Background}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="32" />
@@ -30,7 +31,7 @@
                                     Grid.ColumnSpan="2"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="1"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="0" />
                                 <Border
                                     Grid.Column="0"
@@ -93,9 +94,10 @@
                 </Setter>
             </Style>
             <Style TargetType="{x:Type ComboBox}">
-                <Setter Property="Foreground" Value="{DynamicResource TextBlockForegroundColor}" />
-                <Setter Property="BorderBrush" Value="Gray" />
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderBrush" Value="White" />
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="#222" />
                 <Setter Property="SnapsToDevicePixels" Value="true" />
                 <Setter Property="OverridesDefaultStyle" Value="true" />
                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
@@ -112,12 +114,14 @@
                                     Name="ToggleButton"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="0"
                                     ClickMode="Press"
                                     Focusable="false"
                                     Foreground="{TemplateBinding Foreground}"
                                     IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     Style="{StaticResource ComboBoxToggleButton}" />
                                 <ContentPresenter
+                                    
                                     Name="ContentSite"
                                     Margin="3,3,32,3"
                                     HorizontalAlignment="Center"
@@ -144,15 +148,14 @@
                                     Placement="Bottom"
                                     PopupAnimation="Fade">
                                     <Grid
+                                        Background="{TemplateBinding Background}"
                                         Name="DropDown"
                                         MinWidth="{TemplateBinding ActualWidth}"
                                         MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                         SnapsToDevicePixels="True">
                                         <Border
                                             x:Name="DropDownBorder"
-                                            Background="White"
-                                            BorderBrush="Gray"
-                                            BorderThickness="2" />
+                                            BorderThickness="0" />
                                         <ScrollViewer
                                             Margin="4,6,4,6"
                                             PanningMode="VerticalOnly"
@@ -198,10 +201,7 @@
         Margin="4"
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="18*" />
-            <ColumnDefinition Width="3.0*" />
-        </Grid.ColumnDefinitions>
+       
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -784,43 +784,24 @@
 
             <Grid Name="fifth" Grid.Row="4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="5*" />
 
                     <ColumnDefinition Width="10*" />
-                    <ColumnDefinition Width="1.5*" />
-                    <ColumnDefinition Width="1.5*" />
-
-
-
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <ComboBox
                     Name="languages"
                     Grid.Row="0"
-                    Margin="5"
+                    Margin="1"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Focusable="false"
                     FontSize="16"
                     IsEditable="False" />
-                <!--<my:KBButton Margin="1"  BorderThickness="0" Caption="ESC" Code="1"  VirtualKey="ESCAPE" />
-                <my:KbButton
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="1"
-                    BorderThickness="0"
-                    Caption="Ctrl"
-                    ShiftCaption=""
-                    VirtualKey="LCONTROL"
-                    Visibility="Collapsed" />
-                <my:KbButton
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="1"
-                    BorderThickness="0"
-                    Caption=""
-                    ShiftCaption=""
-                    VirtualKey="NONAME"
-                    Visibility="Collapsed" />-->
                 <my:KbButton
                     Grid.Row="0"
                     Grid.Column="1"
@@ -843,109 +824,11 @@
                     Repeat="False"
                     ShiftCaption=""
                     VirtualKey="NoName" />
-                <my:KbButton
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    Margin="1"
-                    BorderThickness="0"
-                    Caption=""
-                    ShiftCaption=""
-                    VirtualKey="NoName"
-                    Visibility="Collapsed" />
-            </Grid>
-        </Grid>
-        <Grid
-            Grid.Column="1"
-            Margin="5,0,0,0"
-            HorizontalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
+               
 
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <my:KbButton
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="1"
-                Altable="False"
-                BorderThickness="0"
-                Caption="Ins"
-                ShiftCaption=""
-                VirtualKey="Insert" />
-            <my:KbButton
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="1"
-                Altable="False"
-                BorderThickness="0"
-                Caption="Home"
-                ShiftCaption=""
-                VirtualKey="Home" />
-            <my:KbButton
-                Grid.Row="0"
-                Grid.Column="2"
-                Margin="1"
-                Altable="False"
-                BorderThickness="0"
-                Caption="Pg Up"
-                ShiftCaption=""
-                VirtualKey="Prior" />
-            <my:KbButton
-                Grid.Row="1"
-                Grid.Column="0"
-                Margin="1"
-                Altable="False"
-                BorderThickness="0"
-                Caption="Del"
-                ShiftCaption=""
-                VirtualKey="Delete" />
-            <my:KbButton
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="1"
-                Altable="False"
-                BorderThickness="0"
-                Caption="End"
-                ShiftCaption=""
-                VirtualKey="End" />
-            <my:KbButton
-                Grid.Row="1"
-                Grid.Column="2"
-                Margin="1"
-                Altable="False"
-                BorderThickness="0"
-                Caption="Pg Dn"
-                ShiftCaption=""
-                VirtualKey="Next" />
-            <Grid
-                Grid.Row="2"
-                Grid.RowSpan="3"
-                Grid.ColumnSpan="3">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <my:KbButton
-                    Grid.Row="2"
-                    Grid.RowSpan="2"
-                    Grid.Column="1"
+                    
+                    Grid.Column="3"
                     Margin="1"
                     Altable="False"
                     BorderThickness="0"
@@ -954,9 +837,8 @@
                     ShiftCaption=""
                     VirtualKey="Up" />
                 <my:KbButton
-                    Grid.Row="3"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
+                   
+                    Grid.Column="5"
                     Margin="1"
                     Altable="False"
                     BorderThickness="0"
@@ -965,9 +847,8 @@
                     ShiftCaption=""
                     VirtualKey="Left" />
                 <my:KbButton
-                    Grid.Row="4"
-                    Grid.RowSpan="2"
-                    Grid.Column="1"
+                   
+                    Grid.Column="4"
                     Margin="1"
                     Altable="False"
                     BorderThickness="0"
@@ -976,9 +857,8 @@
                     ShiftCaption=""
                     VirtualKey="Down" />
                 <my:KbButton
-                    Grid.Row="3"
-                    Grid.RowSpan="2"
-                    Grid.Column="2"
+                    
+                    Grid.Column="6"
                     Margin="1"
                     Altable="False"
                     BorderThickness="0"
@@ -987,8 +867,7 @@
                     ShiftCaption=""
                     VirtualKey="Right" />
             </Grid>
-
         </Grid>
-
+       
     </Grid>
 </UserControl>

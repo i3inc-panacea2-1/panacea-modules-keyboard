@@ -97,6 +97,7 @@
     <Compile Include="KeyboardWindow.xaml.cs">
       <DependentUpon>KeyboardWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetVersionsResponse.cs" />
     <Compile Include="NumberKeyboard.xaml.cs">
       <DependentUpon>NumberKeyboard.xaml</DependentUpon>
     </Compile>
@@ -204,6 +205,26 @@
     <Resource Include="Images\shift.png" />
     <Resource Include="Images\tab.png" />
     <Resource Include="Images\up_arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\KeyboardMappings\el-GR.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\KeyboardMappings\en-CA.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\KeyboardMappings\en-US.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\KeyboardMappings\fr-CA.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\KeyboardMappings\fr-FR.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\KeyboardMappings\he-IL.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

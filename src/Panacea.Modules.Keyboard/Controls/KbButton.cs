@@ -17,19 +17,17 @@ namespace Panacea.Modules.Keyboard.Controls
     public class KbButton : RepeatButton
     {
         private static SoundPlayer player;
-        private static Dictionary<Keys, List<Action>> _downs = new Dictionary<Keys, List<Action>>();
-        private static Dictionary<Keys, List<Action>> _ups = new Dictionary<Keys, List<Action>>();
-        private static List<KbButton> _buttons = new List<KbButton>();
+
         public static bool IsAltGrPressed { get { return InputSimulator.IsKeyDownAsync(VirtualKeyCode.RMENU) && InputSimulator.IsKeyDownAsync(VirtualKeyCode.LCONTROL); } }
-        private bool IsVirtualKeyPress;
+
         //private readonly DispatcherTimer timer;
         private bool switched;
 
         public bool Toggled { get; private set; }
         readonly List<ushort> shifts = new List<ushort> { (ushort)VirtualKeyCode.LSHIFT, (ushort)VirtualKeyCode.RSHIFT };
         public bool Switched { get { return switched; } }
-        static event EventHandler<KeyEventArgs> VirtualKeyDown;
-        static event EventHandler<KeyEventArgs> VirtualKeyUp;
+        static event EventHandler<VirtualKeyCode> VirtualKeyDown;
+        static event EventHandler<VirtualKeyCode> VirtualKeyUp;
 
 
         #region dependcy proprties
@@ -42,8 +40,8 @@ namespace Panacea.Modules.Keyboard.Controls
                     {
                         var self = dep as KbButton;
                         if (self == null) return;
-                        self.CaptionVisibility = !string.IsNullOrEmpty(val.NewValue?.ToString()) 
-                        ? Visibility.Visible 
+                        self.CaptionVisibility = !string.IsNullOrEmpty(val.NewValue?.ToString())
+                        ? Visibility.Visible
                         : Visibility.Collapsed;
                     }));
 
@@ -192,9 +190,9 @@ namespace Panacea.Modules.Keyboard.Controls
             }
         }
 
-        public String ShiftCaption
+        public string ShiftCaption
         {
-            get { return (String)GetValue(ShiftCaptionProperty); }
+            get { return (string)GetValue(ShiftCaptionProperty); }
             set { SetValue(ShiftCaptionProperty, value); }
         }
 
@@ -293,13 +291,30 @@ namespace Panacea.Modules.Keyboard.Controls
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                _buttons.Add(this);
                 IsVisibleChanged += KbButton_IsVisibleChanged;
             }
 
             Repeat = false;
             timer.Interval = TimeSpan.FromMilliseconds(300);
             timer.Tick += Timer_Tick;
+            VirtualKeyDown += KbButton_VirtualKeyDown;
+            VirtualKeyUp += KbButton_VirtualKeyUp;
+        }
+
+        private void KbButton_VirtualKeyUp(object sender, VirtualKeyCode e)
+        {
+            UpdateLight();
+            UpdateButton();
+        }
+
+        private void KbButton_VirtualKeyDown(object sender, VirtualKeyCode e)
+        {
+            if (e != VirtualKeyCode.LSHIFT && e != VirtualKeyCode.RSHIFT)
+            {
+                OnDifferentKeyDown();
+            }
+            UpdateLight();
+            UpdateButton();
         }
 
         private async void KbButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -312,7 +327,6 @@ namespace Panacea.Modules.Keyboard.Controls
                 SimulateKeyDown();
                 await Task.Delay(30);
                 SimulateKeyUp();
-                IsVirtualKeyPress = false;
                 _pressed = false;
             }
         }
@@ -321,17 +335,9 @@ namespace Panacea.Modules.Keyboard.Controls
         private static void OnVirtualKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             KbButton b = (KbButton)d;
-            if (_downs.ContainsKey(b.VirtualKey))
-            {
-                _downs[b.VirtualKey].Add(b.OnKeyDown);
-                _ups[b.VirtualKey].Add(b.OnKeyUp);
-            }
-            else
-            {
-                _downs.Add(b.VirtualKey, new List<Action>() { b.OnKeyDown });
-                _ups.Add(b.VirtualKey, new List<Action>() { b.OnKeyUp });
-            }
-            b.CheckCapsAndIns();
+
+            b.UpdateLight();
+            b.UpdateButton();
         }
 
 
@@ -343,40 +349,135 @@ namespace Panacea.Modules.Keyboard.Controls
             SimulateKeyDown();
         }
 
-        protected void CheckCapsAndIns()
+        protected void UpdateButton()
         {
-            if (VirtualKey != Keys.Capital && VirtualKey != Keys.ShiftKey && VirtualKey != Keys.RShiftKey && VirtualKey != Keys.LShiftKey) return;
-            if ((Control.IsKeyLocked(Keys.Capital) && VirtualKey == Keys.Capital) ||
-                    Toggled)
+            if (IsShiftToggled())
             {
-                LightOpacity = 1;
+                if (IsCapsLockToggled() && CapsLikeShift)
+                {
+                    if (switched)
+                    {
+                        Switch();
+                    }
+                }
+                else
+                {
+                    if (!switched)
+                    {
+                        Switch();
+                    }
+                }
             }
-            else if (VirtualKey == Keys.Capital || !Toggled)
+            else
             {
-                LightOpacity = 0;
+                if (IsCapsLockToggled() && CapsLikeShift)
+                {
+                    if (!switched)
+                    {
+                        Switch();
+                    }
+                }
+                else
+                {
+                    if (switched)
+                    {
+                        Switch();
+                    }
+                }
             }
-            if (Control.IsKeyLocked(Keys.Insert) && VirtualKey == Keys.Insert)
+            if (IsAltGrPressed)
             {
-                LightOpacity = 1;
+                if (Altable)
+                {
+                    CaptionVisibility = Visibility.Collapsed;
+                    ShiftCaptionVisibility = Visibility.Collapsed;
+                    AltCaptionVisibility = Visibility.Visible;
+                }
+                if (new List<Keys>(){
+                            Keys.ShiftKey,
+                            Keys.Tab,
+                            Keys.Return,
+                            Keys.Capital,
+                Keys.Back}.Contains(
+                    this.VirtualKey))
+                {
+                    Visibility = System.Windows.Visibility.Hidden;
+                }
+
             }
-            else if (VirtualKey == Keys.Insert)
+            else
             {
-                LightOpacity = 0;
+                if (new List<Keys>(){
+                            Keys.ShiftKey,
+                            Keys.Tab,
+                            Keys.Return,
+                            Keys.Capital,
+                Keys.Back}.Contains(
+                    this.VirtualKey))
+                {
+                    Visibility = System.Windows.Visibility.Visible;
+                }
+                if (!string.IsNullOrEmpty(Caption))
+                {
+                    CaptionVisibility = Visibility.Visible;
+                    ShiftCaptionVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    CaptionVisibility = Visibility.Collapsed;
+                }
+                AltCaptionVisibility = Visibility.Collapsed;
             }
         }
+
+        bool IsShiftToggled()
+        {
+            return InputSimulator.IsKeyDownAsync(VirtualKeyCode.SHIFT);
+        }
+
+        bool IsCapsLockToggled()
+        {
+            return InputSimulator.IsTogglingKeyInEffect(VirtualKeyCode.CAPITAL);
+        }
+
+        protected void UpdateLight()
+        {
+            if (VirtualKey != Keys.Capital && VirtualKey != Keys.ShiftKey && VirtualKey != Keys.RShiftKey && VirtualKey != Keys.LShiftKey) return;
+            if (VirtualKey == Keys.Capital)
+            {
+                if (IsCapsLockToggled() || Toggled)
+                {
+                    LightOpacity = 1;
+                }
+                else
+                {
+                    LightOpacity = 0;
+                }
+            }
+
+            if (VirtualKey == Keys.LShiftKey || VirtualKey == Keys.RShiftKey)
+            {
+                if (IsShiftToggled())
+                {
+                    LightOpacity = 1;
+                }
+                else
+                {
+                    LightOpacity = 0;
+                }
+            }
+
+        }
+
         async void OnDifferentKeyDown()
         {
-            if (IsVirtualKeyPress)
+            if ((VirtualKey == Keys.RShiftKey || VirtualKey == Keys.LShiftKey) && Toggled)
             {
-                if ((VirtualKey == Keys.RShiftKey || VirtualKey == Keys.LShiftKey) && Toggled)
-                {
-                    await Task.Delay(30);
-                    SimulateKeyDown();
-                    await Task.Delay(30);
-                    SimulateKeyUp();
-                    IsVirtualKeyPress = false;
-                    _pressed = false;
-                }
+                await Task.Delay(30);
+                SimulateKeyDown();
+                await Task.Delay(30);
+                SimulateKeyUp();
+                _pressed = false;
             }
         }
 
@@ -388,7 +489,6 @@ namespace Panacea.Modules.Keyboard.Controls
             }
 
             ButtonBackground = new SolidColorBrush(Color.FromArgb(120, 255, 255, 255));
-            IsVirtualKeyPress = false;
         }
         void OnKeyUp()
         {
@@ -397,93 +497,6 @@ namespace Panacea.Modules.Keyboard.Controls
                 Toggled = false;
             }
             ButtonBackground = Brushes.Transparent;
-            IsVirtualKeyPress = false;
-        }
-
-        private void CheckCapsAnShift()
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (InputSimulator.IsKeyDownAsync(VirtualKeyCode.RSHIFT)
-                    || InputSimulator.IsKeyDownAsync(VirtualKeyCode.LSHIFT)
-                    || InputSimulator.IsKeyDownAsync(VirtualKeyCode.SHIFT))
-                {
-                    if (InputSimulator.IsTogglingKeyInEffect(VirtualKeyCode.CAPITAL) && CapsLikeShift)
-                    {
-                        if (switched)
-                        {
-                            Switch();
-                        }
-                    }
-                    else
-                    {
-                        if (!switched)
-                        {
-                            Switch();
-                        }
-                    }
-                }
-                else
-                {
-                    if (InputSimulator.IsTogglingKeyInEffect(VirtualKeyCode.CAPITAL) && CapsLikeShift)
-                    {
-                        if (!switched)
-                        {
-                            Switch();
-                        }
-                    }
-                    else
-                    {
-                        if (switched)
-                        {
-                            Switch();
-                        }
-                    }
-                }
-                if (IsAltGrPressed)
-                {
-                    if (Altable)
-                    {
-                        CaptionVisibility = Visibility.Collapsed;
-                        ShiftCaptionVisibility = Visibility.Collapsed;
-                        AltCaptionVisibility = Visibility.Visible;
-                    }
-                    if (new List<Keys>(){
-                            Keys.ShiftKey,
-                            Keys.Tab,
-                            Keys.Return,
-                            Keys.Capital,
-                Keys.Back}.Contains(
-                        this.VirtualKey))
-                    {
-                        Visibility = System.Windows.Visibility.Hidden;
-                    }
-
-                }
-                else
-                {
-                    if (new List<Keys>(){
-                            Keys.ShiftKey,
-                            Keys.Tab,
-                            Keys.Return,
-                            Keys.Capital,
-                Keys.Back}.Contains(
-                        this.VirtualKey))
-                    {
-                        Visibility = System.Windows.Visibility.Visible;
-                    }
-                    if (!string.IsNullOrEmpty(Caption))
-                    {
-                        CaptionVisibility = Visibility.Visible;
-                        ShiftCaptionVisibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        CaptionVisibility = Visibility.Collapsed;
-                    }
-                    AltCaptionVisibility = Visibility.Collapsed;
-                }
-            }));
         }
 
 
@@ -521,14 +534,18 @@ namespace Panacea.Modules.Keyboard.Controls
             player?.Play();
             base.OnMouseDown(e);
             e.Handled = true;
-            if (_pressed) return;
-            IsVirtualKeyPress = true;
-            SimulateKeyDown();
-            IsVirtualKeyPress = true;
-            if (!FakeToggle)
+            if (!_pressed)
             {
-                timer.Interval = TimeSpan.FromMilliseconds(300);
-                timer.Start();
+                SimulateKeyDown();
+                if (!FakeToggle)
+                {
+                    timer.Interval = TimeSpan.FromMilliseconds(300);
+                    timer.Start();
+                }
+            }
+            else
+            {
+                SimulateKeyUp();
             }
         }
 
@@ -536,14 +553,13 @@ namespace Panacea.Modules.Keyboard.Controls
 
         public void SimulateKeyDown()
         {
-            if (!IsVirtualKeyPress) return;
             if (VirtualKey == Keys.LShiftKey) Console.WriteLine("f1");
             if (!FakeToggle)
             {
                 if (VirtualKey != Keys.NoName)
                 {
-
                     InputSimulator.SimulateKeyDown((VirtualKeyCode)VirtualKey);
+                    VirtualKeyDown?.Invoke(this, (VirtualKeyCode)VirtualKey);
                 }
                 else
                 {
@@ -557,10 +573,12 @@ namespace Panacea.Modules.Keyboard.Controls
                 if (!Toggled)
                 {
                     Toggled = true;
-                    LightOpacity = 1;
                     ButtonBackground = new SolidColorBrush(Color.FromArgb(120, 255, 255, 255));
                     if (VirtualKey != Keys.NoName)
+                    {
                         InputSimulator.SimulateKeyDown((VirtualKeyCode)VirtualKey);
+                        VirtualKeyDown?.Invoke(this, (VirtualKeyCode)VirtualKey);
+                    }
                     else
                     {
                         InputSimulator.SimulateKeyDown(VirtualKeyCode.LCONTROL);
@@ -570,10 +588,12 @@ namespace Panacea.Modules.Keyboard.Controls
                 else
                 {
                     Toggled = false;
-                    LightOpacity = 0;
                     ButtonBackground = Brushes.Transparent;
                     if (VirtualKey != Keys.NoName)
+                    {
                         InputSimulator.SimulateKeyUp((VirtualKeyCode)VirtualKey);
+                        VirtualKeyUp?.Invoke(this, (VirtualKeyCode)VirtualKey);
+                    }
                     else
                     {
 
@@ -582,10 +602,8 @@ namespace Panacea.Modules.Keyboard.Controls
                     }
                 }
             }
-
-
-
         }
+
         DispatcherTimer timer = new DispatcherTimer();
 
         protected override void OnMouseUp(System.Windows.Input.MouseButtonEventArgs e)
@@ -593,14 +611,11 @@ namespace Panacea.Modules.Keyboard.Controls
             base.OnMouseUp(e);
             e.Handled = true;
             timer.Stop();
-            IsVirtualKeyPress = true;
             SimulateKeyUp();
-            IsVirtualKeyPress = true;
         }
 
         public void SimulateKeyUp()
         {
-            if (!IsVirtualKeyPress) return;
             if (!_pressed) return;
 
             if (!FakeToggle)
@@ -609,6 +624,7 @@ namespace Panacea.Modules.Keyboard.Controls
                 if (VirtualKey != Keys.NoName)
                 {
                     InputSimulator.SimulateKeyUp((VirtualKeyCode)VirtualKey);
+                    VirtualKeyUp?.Invoke(this, (VirtualKeyCode)VirtualKey);
 
                 }
                 else if (IsAltGrPressed)
@@ -627,23 +643,7 @@ namespace Panacea.Modules.Keyboard.Controls
         }
         private void KbButtonBase_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CapsLikeShift)
-            {
-                if (InputSimulator.IsTogglingKeyInEffect(VirtualKeyCode.CAPITAL))
-                {
-                    if (!switched)
-                    {
-                        Switch();
-                    }
-                }
-                else
-                {
-                    if (switched)
-                    {
-                        Switch();
-                    }
-                }
-            }
+
         }
         protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
         {

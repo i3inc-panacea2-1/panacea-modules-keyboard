@@ -1,6 +1,7 @@
 ﻿using Panacea.Core;
 using Panacea.Modularity;
 using Panacea.Modularity.UiManager;
+using Panacea.Modules.Keyboard.Models;
 using Panacea.Modules.Keyboard.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -40,10 +41,20 @@ namespace Panacea.Modules.Keyboard
 
         }
 
-        public Task EndInit()
+        public async Task EndInit()
         {
+            List<Language> languages = null;
+            var res = await _core.HttpClient.GetObjectAsync<GetVersionsResponse>("get_versions/");
+            if (res.Success)
+            {
+                languages = res.Result.InputLanguages;
+            }
+            else
+            {
+                throw new Exception(res.Error);
+            }
             _kbWindow = new KeyboardWindow();
-            _keyboard = new VirtualKeyboard();
+            _keyboard = new VirtualKeyboard(languages.Select(l=> new System.Globalization.CultureInfo(l.Code)).ToList());
             _dateKeyboard = new DateKeyboard();
             _numberKeyboard = new NumberKeyboard();
             if(_core.TryGetUiManager(out IUiManager ui))
@@ -58,9 +69,6 @@ namespace Panacea.Modules.Keyboard
             EventManager.RegisterClassHandler(typeof(UIElement), System.Windows.Input.Keyboard.PreviewGotKeyboardFocusEvent,
                 (KeyboardFocusChangedEventHandler)OnPreviewGotKeyboardFocus);
 
-           
-            //Automation.AddAutomationFocusChangedEventHandler(OnFocusChanged);
-            return Task.CompletedTask;
         }
 
         private void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
