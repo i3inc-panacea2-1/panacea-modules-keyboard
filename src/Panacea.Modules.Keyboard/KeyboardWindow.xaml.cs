@@ -58,7 +58,7 @@ namespace Panacea.Modules.Keyboard
             var sc = Screen.PrimaryScreen;
 
             Width = sc.WorkingArea.Width;
-            Height = sc.WorkingArea.Height / 3.2;
+            Height = sc.WorkingArea.Height / 2.8;
             SetValue(WidthProperty, Width);
             Left = sc.WorkingArea.Left;
             Top = sc.WorkingArea.Bottom - ActualHeight;

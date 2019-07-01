@@ -777,15 +777,11 @@
                     Repeat="False"
                     ShiftCaption=""
                     VirtualKey="RShiftKey" />
-
-
             </Grid>
-
 
             <Grid Name="fifth" Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" />
-
                     <ColumnDefinition Width="10*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
@@ -811,7 +807,6 @@
                     Focusable="False"
                     ShiftCaption=""
                     VirtualKey="Space" />
-
                 <my:KbButton
                     x:Name="altgr"
                     Grid.Row="0"
@@ -824,8 +819,6 @@
                     Repeat="False"
                     ShiftCaption=""
                     VirtualKey="NoName" />
-               
-
                 <my:KbButton
                     
                     Grid.Column="3"
