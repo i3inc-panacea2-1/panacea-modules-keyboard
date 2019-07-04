@@ -73,6 +73,7 @@ namespace Panacea.Modules.Keyboard
 
         private void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
+            Debug.WriteLine("GotFocus");
             var txt = e.NewFocus as TextBoxBase;
             var pass = e.NewFocus as PasswordBox;
             if (txt != null)
@@ -92,7 +93,8 @@ namespace Panacea.Modules.Keyboard
 
         void HandleElement(FrameworkElement el)
         {
-            el.LostFocus += Txt_LostFocus;
+            el.LostFocus -= Txt_LostFocus;
+            //el.LostFocus += Txt_LostFocus;
             var scope = el.GetValue(FrameworkElement.InputScopeProperty) as InputScope;
             if (scope != null)
             {
@@ -119,44 +121,10 @@ namespace Panacea.Modules.Keyboard
 
         private void Txt_LostFocus(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Lost focus");
             var txt = sender as FrameworkElement;
             txt.LostFocus -= Txt_LostFocus;
             HideKeyboard();
-        }
-
-        private void OnFocusChanged(object sender, AutomationFocusChangedEventArgs e)
-        {
-
-            var el = sender as AutomationElement;// AutomationElement.FocusedElement;
-            Debug.WriteLine(el.Current.ControlType.ProgrammaticName);
-            if (el.Current.ControlType == ControlType.Edit)
-            {
-                try
-                {
-                    TextPattern textPattern =
-                        el.GetCurrentPattern(TextPattern.Pattern) as TextPattern;
-
-
-                    var pts = el.GetSupportedProperties();
-                    Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(pts));
-                    foreach (var p in pts)
-                    {
-                        var v = el.GetCurrentPropertyValue(p);
-                        Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(v));
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-                ShowKeyboard(_keyboard);
-            }
-            else
-            {
-                HideKeyboard();
-            }
-
         }
 
         internal void ToggleKeyboard()
@@ -176,20 +144,20 @@ namespace Panacea.Modules.Keyboard
         internal void ShowKeyboard(FrameworkElement content)
         {
             Debug.WriteLine("Showing");
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Keyboard = content;
                 _kbWindow.Show();
-            }));
+            });
         }
 
         internal void HideKeyboard()
         {
             Debug.WriteLine("Hiding");
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Hide();
-            }));
+            });
         }
 
         public Task Shutdown()

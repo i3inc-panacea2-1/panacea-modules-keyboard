@@ -48,7 +48,6 @@ namespace Panacea.Modules.Keyboard
                     var target = System.Windows.Input.Keyboard.FocusedElement;
                     if (target is TextBox)
                     {
-                        ((TextBox)target).Text = selectedDate.Value.ToString(LanguageContext.Instance.Culture.DateTimeFormat.LongDatePattern, LanguageContext.Instance.Culture);
                         ((TextBox)target).Tag = selectedDate.Value;
                     }
                     var tRequest = new TraversalRequest(FocusNavigationDirection.Next);
