@@ -73,7 +73,7 @@ namespace Panacea.Modules.Keyboard
 
         private void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            Debug.WriteLine("GotFocus");
+            //Debug.WriteLine("GotFocus");
             var txt = e.NewFocus as TextBoxBase;
             var pass = e.NewFocus as PasswordBox;
             if (txt != null)
@@ -121,7 +121,7 @@ namespace Panacea.Modules.Keyboard
 
         private void Txt_LostFocus(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("Lost focus");
+            //Debug.WriteLine("Lost focus");
             var txt = sender as FrameworkElement;
             txt.LostFocus -= Txt_LostFocus;
             HideKeyboard();
@@ -143,7 +143,7 @@ namespace Panacea.Modules.Keyboard
 
         internal void ShowKeyboard(FrameworkElement content)
         {
-            Debug.WriteLine("Showing");
+            //Debug.WriteLine("Showing");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Keyboard = content;
@@ -153,7 +153,7 @@ namespace Panacea.Modules.Keyboard
 
         internal void HideKeyboard()
         {
-            Debug.WriteLine("Hiding");
+            //Debug.WriteLine("Hiding");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Hide();
