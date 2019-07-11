@@ -56,7 +56,10 @@ namespace Panacea.Modules.Keyboard
         {
             //await Task.Delay(10);
             var sc = Screen.PrimaryScreen;
-
+            if (Screen.AllScreens.Count() > 1)
+            {
+                sc = Screen.AllScreens.First(s => !s.Primary);
+            }
             Width = sc.WorkingArea.Width;
             Height = sc.WorkingArea.Height / 2.8;
             SetValue(WidthProperty, Width);
