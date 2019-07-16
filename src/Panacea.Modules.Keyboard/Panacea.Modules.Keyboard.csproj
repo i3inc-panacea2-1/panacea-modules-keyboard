@@ -198,7 +198,7 @@
       <Version>12.0.1</Version>
     </PackageReference>
     <PackageReference Include="Panacea.Multilinguality">
-      <Version>1.0.1</Version>
+      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="Panacea.Mvvm">
       <Version>0.0.1</Version>
