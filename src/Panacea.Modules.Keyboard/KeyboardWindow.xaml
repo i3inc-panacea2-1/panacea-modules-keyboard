@@ -22,14 +22,14 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid HorizontalAlignment="Center">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
         <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource AncestorType=local:KeyboardWindow}, Path=Keyboard}" />
         <Button
             Name="btnHide"
-            Grid.Row="0"
+            Grid.Column="1"
             Margin="1"
             Background="{DynamicResource KeyboardButtonBackground}"
             Click="BtnHide_Click"
