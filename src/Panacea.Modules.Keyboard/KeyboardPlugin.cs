@@ -23,7 +23,9 @@ namespace Panacea.Modules.Keyboard
         VirtualKeyboard _keyboard;
         DateKeyboard _dateKeyboard;
         NumberKeyboard _numberKeyboard;
+        LanguageButtonViewModel _languageButton { get; set; }
         NavigationButtonViewModel _navButton;
+        List<Language> _languages;
         private readonly PanaceaServices _core;
 
         public KeyboardPlugin(PanaceaServices core)
@@ -43,24 +45,27 @@ namespace Panacea.Modules.Keyboard
 
         public async Task EndInit()
         {
-            List<Language> languages = null;
+            List<Language> inputLanguages = null;
             var res = await _core.HttpClient.GetObjectAsync<GetVersionsResponse>("get_versions/");
             if (res.Success)
             {
-                languages = res.Result.InputLanguages;
+                inputLanguages = res.Result.InputLanguages;
+                _languages = res.Result.Languages;
             }
             else
             {
                 throw new Exception(res.Error);
             }
             _kbWindow = new KeyboardWindow();
-            _keyboard = new VirtualKeyboard(languages.Select(l=> new System.Globalization.CultureInfo(l.Code)).ToList());
+            _keyboard = new VirtualKeyboard(inputLanguages.Select(l=> new System.Globalization.CultureInfo(l.Code)).ToList());
             _dateKeyboard = new DateKeyboard();
             _numberKeyboard = new NumberKeyboard();
             if(_core.TryGetUiManager(out IUiManager ui))
             {
                 _navButton = new NavigationButtonViewModel(this);
                 ui.AddNavigationBarControl(_navButton);
+                _languageButton = new LanguageButtonViewModel(_languages);
+                ui.AddNavigationBarControl(_languageButton);
             }
            
 
@@ -140,6 +145,7 @@ namespace Panacea.Modules.Keyboard
         }
 
         internal bool IsKeyboardOpen => _kbWindow.IsVisible;
+
 
         internal void ShowKeyboard(FrameworkElement content)
         {

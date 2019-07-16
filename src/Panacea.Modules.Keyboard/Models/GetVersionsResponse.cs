@@ -13,6 +13,9 @@ namespace Panacea.Modules.Keyboard.Models
 
         [DataMember(Name = "inputLanguages")]
         public List<Language> InputLanguages { get; set; }
+
+        [DataMember(Name = "languages")]
+        public List<Language> Languages { get; set; }
     }
 
 
