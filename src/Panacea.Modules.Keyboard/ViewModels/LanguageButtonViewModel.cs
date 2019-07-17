@@ -30,9 +30,10 @@ namespace Panacea.Modules.Keyboard.ViewModels
         public Language SelectedLanguage {
             get => _selectedLanguage;
             set {
+                if (value == null) return;
                 _selectedLanguage = value;
                 OnPropertyChanged();
-                LanguageContext.Instance.Culture = new CultureInfo(value.Code);
+                LanguageContext.Instance.Culture = new CultureInfo(value?.Code);
                 PopupOpen = false;
             }
         }
@@ -40,6 +41,11 @@ namespace Panacea.Modules.Keyboard.ViewModels
         public LanguageButtonViewModel(List<Language> _languages)
         {
             Languages = _languages;
+            var initialLanguage = Languages.FirstOrDefault(l => l.Code == LanguageContext.Instance.Culture.Name);
+            if (initialLanguage != null)
+            {
+                SelectedLanguage = initialLanguage;
+            }
             ClickCommand = new RelayCommand(args =>
             {
                 PopupOpen = !PopupOpen;
