@@ -43,7 +43,7 @@
         Command="{Binding ClickCommand}"
         Foreground="White"
         Text="{multilinguality:Translate 'Language',
-                                         'core'}"
+                                         'Keyboard'}"
         TextVisibility="Visible">
         <Popup
             Name="popup"
