@@ -16,6 +16,20 @@ namespace Panacea.Modules.Keyboard.Models
 
         [DataMember(Name = "languages")]
         public List<Language> Languages { get; set; }
+
+        [DataMember(Name = "translations")]
+        public Dictionary<string, Dictionary<string, List<Translation>>> Translations { get; set; }
+    }
+
+    [DataContract]
+    public class Translation
+    {
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
+
+        [DataMember(Name = "trans")]
+        public string Trans { get; set; }
+
     }
 
 

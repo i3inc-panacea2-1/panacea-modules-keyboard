@@ -1,8 +1,10 @@
 ﻿using Panacea.Core;
 using Panacea.Modularity;
+using Panacea.Modularity.Keyboard;
 using Panacea.Modularity.UiManager;
 using Panacea.Modules.Keyboard.Models;
 using Panacea.Modules.Keyboard.ViewModels;
+using Panacea.Multilinguality;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +19,7 @@ using System.Windows.Input;
 
 namespace Panacea.Modules.Keyboard
 {
-    public class KeyboardPlugin : IPlugin
+    public class KeyboardPlugin : IKeyboardPlugin
     {
         KeyboardWindow _kbWindow;
         VirtualKeyboard _keyboard;
@@ -49,6 +51,21 @@ namespace Panacea.Modules.Keyboard
             var res = await _core.HttpClient.GetObjectAsync<GetVersionsResponse>("get_versions/");
             if (res.Success)
             {
+                var trans = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+
+                foreach (var k in res.Result.Translations)
+                {
+                    trans.Add(k.Key, new Dictionary<string, Dictionary<string, string>>()); // language
+                    foreach (var kk in k.Value)
+                    {
+                        trans[k.Key].Add(kk.Key, new Dictionary<string, string>());
+                        foreach (var transl in kk.Value)
+                        {
+                            trans[k.Key][kk.Key].Add(transl.Id, transl.Trans);
+                        }
+                    }
+                }
+                LanguageContext.Instance.Dictionary.translations = trans;
                 inputLanguages = res.Result.InputLanguages;
                 _languages = res.Result.Languages;
             }
@@ -57,27 +74,45 @@ namespace Panacea.Modules.Keyboard
                 throw new Exception(res.Error);
             }
             _kbWindow = new KeyboardWindow();
-            _keyboard = new VirtualKeyboard(inputLanguages.Select(l=> new System.Globalization.CultureInfo(l.Code)).ToList());
+            _keyboard = new VirtualKeyboard(inputLanguages.Select(l => new System.Globalization.CultureInfo(l.Code)).ToList());
             _dateKeyboard = new DateKeyboard();
             _numberKeyboard = new NumberKeyboard();
-            if(_core.TryGetUiManager(out IUiManager ui))
+            if (_core.TryGetUiManager(out IUiManager ui))
             {
                 _navButton = new NavigationButtonViewModel(this);
                 ui.AddNavigationBarControl(_navButton);
                 _languageButton = new LanguageButtonViewModel(_languages);
                 ui.AddNavigationBarControl(_languageButton);
             }
-           
+
 
             //ShowKeyboard(_keyboard);
             //return Task.CompletedTask;
             EventManager.RegisterClassHandler(typeof(UIElement), System.Windows.Input.Keyboard.PreviewGotKeyboardFocusEvent,
                 (KeyboardFocusChangedEventHandler)OnPreviewGotKeyboardFocus);
 
+            //Automation.AddAutomationFocusChangedEventHandler(new  AutomationFocusChangedEventHandler(OnUIAutomationEvent));
+
         }
+
+        //private void OnUIAutomationEvent(object sender, AutomationEventArgs e)
+        //{
+        //    Debug.WriteLine("external");
+        //    var el = AutomationElement.FocusedElement;
+        //    var current = el.Current;
+        //    Debug.WriteLine(current.ControlType.ProgrammaticName);
+        //    if (current.HasKeyboardFocus)
+        //    {
+        //        if (IsKeyboardOpen) return;
+        //        ShowKeyboard(_keyboard);
+        //    }
+        //    else HideKeyboard();
+        //    Debug.WriteLine("end external");
+        //}
 
         private void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
+            //Debug.WriteLine("internal");
             //Debug.WriteLine("GotFocus");
             var txt = e.NewFocus as TextBoxBase;
             var pass = e.NewFocus as PasswordBox;
@@ -85,15 +120,16 @@ namespace Panacea.Modules.Keyboard
             {
                 HandleElement(txt);
             }
-            else if(pass != null)
+            else if (pass != null)
             {
                 HandleElement(pass);
             }
             else
             {
-                
+
                 HideKeyboard();
             }
+            //Debug.WriteLine("end internal");
         }
 
         void HandleElement(FrameworkElement el)
@@ -146,6 +182,26 @@ namespace Panacea.Modules.Keyboard
 
         internal bool IsKeyboardOpen => _kbWindow.IsVisible;
 
+        public Task Shutdown()
+        {
+            return Task.CompletedTask;
+        }
+
+        public void ShowKeyboard(KeyboardType type)
+        {
+            switch (type)
+            {
+                case KeyboardType.Date:
+                    ShowKeyboard(_dateKeyboard);
+                    break;
+                case KeyboardType.Number:
+                    ShowKeyboard(_numberKeyboard);
+                    break;
+                default:
+                    ShowKeyboard(_keyboard);
+                    break;
+            }
+        }
 
         internal void ShowKeyboard(FrameworkElement content)
         {
@@ -157,18 +213,13 @@ namespace Panacea.Modules.Keyboard
             });
         }
 
-        internal void HideKeyboard()
+        public void HideKeyboard()
         {
             //Debug.WriteLine("Hiding");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Hide();
             });
-        }
-
-        public Task Shutdown()
-        {
-            return Task.CompletedTask;
         }
     }
 }
