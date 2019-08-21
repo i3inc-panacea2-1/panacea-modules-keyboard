@@ -210,15 +210,18 @@ namespace Panacea.Modules.Keyboard
             {
                 _kbWindow.Keyboard = content;
                 _kbWindow.Show();
+                KeyboardOpenChanged?.Invoke(this, true);
             });
+            
         }
-
+        public event EventHandler<bool> KeyboardOpenChanged;
         public void HideKeyboard()
         {
             //Debug.WriteLine("Hiding");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Hide();
+                KeyboardOpenChanged?.Invoke(this, false);
             });
         }
     }

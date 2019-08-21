@@ -7,15 +7,35 @@
     xmlns:local="clr-namespace:Panacea.Modules.Keyboard.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
+    Panel.ZIndex="600"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d"
     DockPanel.Dock="Right"
-    Panel.ZIndex="600">
-    <controls:ImageButton
-        controls:Material.Icon="keyboard"
-        Command="{Binding ClickCommand}"
-        Foreground="White"
-        TextVisibility="Visible"
-        Text="{multilinguality:Translate 'Toggle', 'Keyboard'}"/>
+    mc:Ignorable="d"
+    Focusable="False">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <local:NotBooleanToVisibilityConverter x:Key="NotBoolToVis"/>
+    </UserControl.Resources>
+    <Grid>
+        <controls:ImageButton
+            Focusable="False"
+            Visibility="{Binding KeyboardVisible, Converter={StaticResource NotBoolToVis}}"
+            controls:Material.Icon="keyboard"
+            Command="{Binding ClickCommand}"
+            Foreground="White"
+            Text="{multilinguality:Translate 'Show',
+                                             'Keyboard'}"
+            TextVisibility="Visible" />
+
+        <controls:ImageButton
+            Focusable="False"
+             Visibility="{Binding KeyboardVisible, Converter={StaticResource BoolToVis}}"
+            controls:Material.Icon="keyboard"
+            Command="{Binding ClickCommand}"
+            Foreground="White"
+            Text="{multilinguality:Translate 'Hide',
+                                             'Keyboard'}"
+            TextVisibility="Visible" />
+    </Grid>
 </UserControl>
