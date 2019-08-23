@@ -74,6 +74,7 @@ namespace Panacea.Modules.Keyboard
                 throw new Exception(res.Error);
             }
             _kbWindow = new KeyboardWindow();
+            _kbWindow.IsVisibleChanged += _kbWindow_IsVisibleChanged;
             _keyboard = new VirtualKeyboard(inputLanguages.Select(l => new System.Globalization.CultureInfo(l.Code)).ToList());
             _dateKeyboard = new DateKeyboard();
             _numberKeyboard = new NumberKeyboard();
@@ -93,6 +94,11 @@ namespace Panacea.Modules.Keyboard
 
             //Automation.AddAutomationFocusChangedEventHandler(new  AutomationFocusChangedEventHandler(OnUIAutomationEvent));
 
+        }
+
+        private void _kbWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            KeyboardOpenChanged?.Invoke(this, (bool)e.NewValue);
         }
 
         //private void OnUIAutomationEvent(object sender, AutomationEventArgs e)
@@ -210,7 +216,7 @@ namespace Panacea.Modules.Keyboard
             {
                 _kbWindow.Keyboard = content;
                 _kbWindow.Show();
-                KeyboardOpenChanged?.Invoke(this, true);
+               
             });
             
         }
@@ -221,7 +227,6 @@ namespace Panacea.Modules.Keyboard
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Hide();
-                KeyboardOpenChanged?.Invoke(this, false);
             });
         }
     }
