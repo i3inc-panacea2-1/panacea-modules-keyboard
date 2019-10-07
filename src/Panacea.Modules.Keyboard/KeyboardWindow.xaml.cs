@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -60,11 +61,16 @@ namespace Panacea.Modules.Keyboard
             {
                 sc = Screen.AllScreens.First(s => !s.Primary);
             }
-            Width = sc.WorkingArea.Width;
-            Height = sc.WorkingArea.Height / 3;
+            var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
+            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+
+            var dpiX = (int)dpiXProperty.GetValue(null, null);
+            var dpiY = (int)dpiYProperty.GetValue(null, null);
+            Width = sc.WorkingArea.Width * 96.0/ dpiX;
+            Height = sc.WorkingArea.Height *  96.0 /dpiY / 3.0;
             SetValue(WidthProperty, Width);
-            Left = sc.WorkingArea.Left;
-            Top = sc.WorkingArea.Bottom - ActualHeight;
+            Left = sc.WorkingArea.Left *  96.0/ dpiX;
+            Top = sc.WorkingArea.Bottom *  96.0 / dpiY - ActualHeight;
         }
         private void KeyboardWindow_Loaded(object sender, RoutedEventArgs e)
         {
