@@ -9,12 +9,11 @@
     xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    
     mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="KeyboardButtonBackground" Color="#222222" />
     </UserControl.Resources>
-    <Grid VerticalAlignment="Center">
+    <Grid VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="auto" />
@@ -40,7 +39,9 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button
-                        Padding="20"
+                        Padding="15"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="{DynamicResource KeyboardButtonBackground}"
                         Command="{Binding RelativeSource={RelativeSource AncestorType=local:DateKeyboard}, Path=SelectYearCommand}"
                         CommandParameter="{Binding Number}"
