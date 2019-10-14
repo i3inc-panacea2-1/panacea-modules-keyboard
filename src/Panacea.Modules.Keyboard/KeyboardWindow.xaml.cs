@@ -15,7 +15,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Native.Extensions;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Panacea.Modules.Keyboard
 {
@@ -40,41 +42,45 @@ namespace Panacea.Modules.Keyboard
         public KeyboardWindow()
         {
             InitializeComponent();
-            var h = new WindowInteropHelper(this);
-            h.EnsureHandle();
-            var source = HwndSource.FromHwnd(h.Handle);
-            source.AddHook(new HwndSourceHook(WndProc));
-            Loaded += KeyboardWindow_Loaded;
-            SizeChanged += KeyboardWindow_SizeChanged;
-           
         }
 
         private void KeyboardWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            
+
         }
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             //await Task.Delay(10);
-            var sc = Screen.PrimaryScreen;
-            if (Screen.AllScreens.Count() > 1)
-            {
-                sc = Screen.AllScreens.First(s => !s.Primary);
-            }
-            var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
-            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+            //var sc = Screen.PrimaryScreen;
+            //if (Screen.AllScreens.Count() > 1)
+            //{
+            //    sc = Screen.AllScreens.First(s => !s.Primary);
+            //}
+            //var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
+            //var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
 
-            var dpiX = (int)dpiXProperty.GetValue(null, null);
-            var dpiY = (int)dpiYProperty.GetValue(null, null);
-            Width = sc.WorkingArea.Width * 96.0/ dpiX;
-            Height = sc.WorkingArea.Height *  96.0 /dpiY / 3.0;
-            SetValue(WidthProperty, Width);
-            Left = sc.WorkingArea.Left *  96.0/ dpiX;
-            Top = sc.WorkingArea.Bottom *  96.0 / dpiY - ActualHeight;
+            //var dpiX = (int)dpiXProperty.GetValue(null, null);
+            //var dpiY = (int)dpiYProperty.GetValue(null, null);
+            //Width = sc.WorkingArea.Width * 96.0/ dpiX;
+            //Height = sc.WorkingArea.Height *  96.0 /dpiY / 3.0;
+            //SetValue(WidthProperty, Width);
+            //Left = sc.WorkingArea.Left *  96.0/ dpiX;
+            //Top = sc.WorkingArea.Bottom *  96.0 / dpiY - ActualHeight;
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            //var h = new WindowInteropHelper(this);
+            //h.EnsureHandle();
+            //var source = HwndSource.FromHwnd(h.Handle);
+            //source.AddHook(new HwndSourceHook(WndProc));
         }
         private void KeyboardWindow_Loaded(object sender, RoutedEventArgs e)
         {
-          
+
+
+
         }
 
         private const int WM_MOUSEACTIVATE = 0x0021, MA_NOACTIVATE = 0x0003;
@@ -92,6 +98,26 @@ namespace Panacea.Modules.Keyboard
         {
             Hide();
         }
+        public new void Show()
+        {
+            var sc = Screen.PrimaryScreen;
+            if (Screen.AllScreens.Count() > 1)
+            {
+                sc = Screen.AllScreens.First(s => !s.Primary);
+            }
+            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+            var dpiY = (int)dpiYProperty.GetValue(null, null);
+            Height = sc.WorkingArea.Height * 96.0 /dpiY / 4;
+            this.ToAppBar(System.Windows.Native.ABEdge.Bottom);
+            base.Show();
+        }
+
+        public new void Hide()
+        {
+            this.ToAppBar(System.Windows.Native.ABEdge.None);
+            base.Hide();
+        }
+
 
         protected override void OnClosing(CancelEventArgs e)
         {

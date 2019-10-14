@@ -9,12 +9,13 @@
     xmlns:multilinguality="clr-namespace:Panacea.Multilinguality;assembly=Panacea.Multilinguality"
     Title="KeyboardWindow"
     controls:RippleEffectDecorator.HighlightBackground="#44ffffff"
-    ResizeMode="NoResize"
+
     ShowActivated="False"
     ShowInTaskbar="False"
-    Topmost="True"
+    
     Background="#111"
     WindowStyle="None"
+    Loaded="KeyboardWindow_Loaded"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
