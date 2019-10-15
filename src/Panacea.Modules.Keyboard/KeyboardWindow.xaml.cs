@@ -65,10 +65,10 @@ namespace Panacea.Modules.Keyboard
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            //var h = new WindowInteropHelper(this);
-            //h.EnsureHandle();
-            //var source = HwndSource.FromHwnd(h.Handle);
-            //source.AddHook(new HwndSourceHook(WndProc));
+            var h = new WindowInteropHelper(this);
+            h.EnsureHandle();
+            var source = HwndSource.FromHwnd(h.Handle);
+            source.AddHook(new HwndSourceHook(WndProc));
         }
         private void KeyboardWindow_Loaded(object sender, RoutedEventArgs e)
         {
