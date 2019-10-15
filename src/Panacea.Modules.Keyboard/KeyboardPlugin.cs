@@ -43,7 +43,7 @@ namespace Panacea.Modules.Keyboard
         {
             await Task.Run(() =>
             {
-                using (var searcher = new ManagementObjectSearcher("Select * from Win32_Keyboard"))
+                using (var searcher = new ManagementObjectSearcher("Select DeviceID from Win32_Keyboard"))
                 {
                     foreach (ManagementObject keyboard in searcher.Get())
                     {
@@ -228,7 +228,7 @@ namespace Panacea.Modules.Keyboard
             _visible = true;
             if (!await Task.Run(() =>
              {
-                 using (var searcher = new ManagementObjectSearcher("Select * from Win32_Keyboard"))
+                 using (var searcher = new ManagementObjectSearcher("Select DeviceID from Win32_Keyboard"))
                  {
                      foreach (ManagementObject keyboard in searcher.Get())
                      {
