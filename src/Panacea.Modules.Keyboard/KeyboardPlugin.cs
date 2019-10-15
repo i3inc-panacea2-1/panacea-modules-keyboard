@@ -39,9 +39,19 @@ namespace Panacea.Modules.Keyboard
             _core = core;
         }
 
-        public Task BeginInit()
+        public async Task BeginInit()
         {
-            return Task.CompletedTask;
+            await Task.Run(() =>
+            {
+                using (var searcher = new ManagementObjectSearcher("Select * from Win32_Keyboard"))
+                {
+                    foreach (ManagementObject keyboard in searcher.Get())
+                    {
+                        var id = keyboard.GetPropertyValue("DeviceID").ToString();
+                        _core.Logger.Info(this, id);
+                    }
+                }
+            });
         }
 
         public void Dispose()
