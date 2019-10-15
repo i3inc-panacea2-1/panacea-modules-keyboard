@@ -13,7 +13,7 @@
     ShowActivated="False"
     ShowInTaskbar="False"
     
-    Background="#111"
+    Background="#000"
     WindowStyle="None"
     Loaded="KeyboardWindow_Loaded"
     mc:Ignorable="d">

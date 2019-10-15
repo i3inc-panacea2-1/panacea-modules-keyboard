@@ -11,31 +11,31 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     DockPanel.Dock="Right"
-    mc:Ignorable="d"
-    Focusable="False">
+    Focusable="False"
+    mc:Ignorable="d">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-        <local:NotBooleanToVisibilityConverter x:Key="NotBoolToVis"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <local:NotBooleanToVisibilityConverter x:Key="NotBoolToVis" />
     </UserControl.Resources>
     <Grid>
         <controls:ImageButton
-            Focusable="False"
-            Visibility="{Binding KeyboardVisible, Converter={StaticResource NotBoolToVis}}"
             controls:Material.Icon="keyboard"
             Command="{Binding ClickCommand}"
+            Focusable="False"
             Foreground="White"
             Text="{multilinguality:Translate 'Show',
                                              'Keyboard'}"
-            TextVisibility="Visible" />
+            TextVisibility="Visible"
+            Visibility="{Binding KeyboardVisible, Converter={StaticResource NotBoolToVis}}" />
 
         <controls:ImageButton
-            Focusable="False"
-             Visibility="{Binding KeyboardVisible, Converter={StaticResource BoolToVis}}"
             controls:Material.Icon="keyboard"
             Command="{Binding ClickCommand}"
+            Focusable="False"
             Foreground="White"
             Text="{multilinguality:Translate 'Hide',
                                              'Keyboard'}"
-            TextVisibility="Visible" />
+            TextVisibility="Visible"
+            Visibility="{Binding KeyboardVisible, Converter={StaticResource BoolToVis}}" />
     </Grid>
 </UserControl>

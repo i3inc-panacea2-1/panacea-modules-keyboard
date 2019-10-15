@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -208,21 +209,37 @@ namespace Panacea.Modules.Keyboard
                     break;
             }
         }
-
-        internal void ShowKeyboard(FrameworkElement content)
+        bool _visible = false;
+        internal async void ShowKeyboard(FrameworkElement content)
         {
+            _visible = true;
+            if (!await Task.Run(() =>
+             {
+                 using (var searcher = new ManagementObjectSearcher("Select Name from Win32_Keyboard"))
+                 {
+                     foreach (ManagementObject keyboard in searcher.Get())
+                     {
+                         if (!keyboard.GetPropertyValue("Name").Equals(""))
+                         {
+                             return false;
+                         }
+                     }
+                 }
+                 return true;
+             })) return;
+            if (!_visible) return;
             //Debug.WriteLine("Showing");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _kbWindow.Keyboard = content;
                 _kbWindow.Show();
-               
             });
             
         }
         public event EventHandler<bool> KeyboardOpenChanged;
         public void HideKeyboard()
         {
+            _visible = false;
             //Debug.WriteLine("Hiding");
             Application.Current.Dispatcher.Invoke(() =>
             {

@@ -42,6 +42,14 @@ namespace Panacea.Modules.Keyboard
         public KeyboardWindow()
         {
             InitializeComponent();
+            var sc = Screen.PrimaryScreen;
+            if (Screen.AllScreens.Count() > 1)
+            {
+                sc = Screen.AllScreens.First(s => !s.Primary);
+            }
+            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+            var dpiY = (int)dpiYProperty.GetValue(null, null);
+            Height = sc.WorkingArea.Height * 96.0 / dpiY / 4;
         }
 
         private void KeyboardWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -50,22 +58,8 @@ namespace Panacea.Modules.Keyboard
         }
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            //await Task.Delay(10);
-            //var sc = Screen.PrimaryScreen;
-            //if (Screen.AllScreens.Count() > 1)
-            //{
-            //    sc = Screen.AllScreens.First(s => !s.Primary);
-            //}
-            //var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
-            //var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
-
-            //var dpiX = (int)dpiXProperty.GetValue(null, null);
-            //var dpiY = (int)dpiYProperty.GetValue(null, null);
-            //Width = sc.WorkingArea.Width * 96.0/ dpiX;
-            //Height = sc.WorkingArea.Height *  96.0 /dpiY / 3.0;
-            //SetValue(WidthProperty, Width);
-            //Left = sc.WorkingArea.Left *  96.0/ dpiX;
-            //Top = sc.WorkingArea.Bottom *  96.0 / dpiY - ActualHeight;
+           
+            
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -109,6 +103,7 @@ namespace Panacea.Modules.Keyboard
             var dpiY = (int)dpiYProperty.GetValue(null, null);
             Height = sc.WorkingArea.Height * 96.0 /dpiY / 4;
             this.ToAppBar(System.Windows.Native.ABEdge.Bottom);
+            Height = sc.WorkingArea.Height * 96.0 / dpiY / 4;
             base.Show();
         }
 
