@@ -31,6 +31,9 @@ namespace Panacea.Modules.Keyboard
         List<Language> _languages;
         private readonly PanaceaServices _core;
 
+        [PanaceaInject("IgnoreKeyboards", "Keyboard devices to ignore when desciding if Panacea should show the on screen keyboard", "IgnoreKeyboards=PID_0E41;PID_TEST")]
+        protected string IgnoreKeyboards { get; set; } = "";
+
         public KeyboardPlugin(PanaceaServices core)
         {
             _core = core;
@@ -215,11 +218,12 @@ namespace Panacea.Modules.Keyboard
             _visible = true;
             if (!await Task.Run(() =>
              {
-                 using (var searcher = new ManagementObjectSearcher("Select Name from Win32_Keyboard"))
+                 using (var searcher = new ManagementObjectSearcher("Select * from Win32_Keyboard"))
                  {
                      foreach (ManagementObject keyboard in searcher.Get())
                      {
-                         if (!keyboard.GetPropertyValue("Name").Equals(""))
+                         var id = keyboard.GetPropertyValue("DeviceID").ToString();
+                         if (!id.Equals("") && !IgnoreKeyboards.Split(';').Any(s => id.Contains(s)))
                          {
                              return false;
                          }
@@ -234,7 +238,7 @@ namespace Panacea.Modules.Keyboard
                 _kbWindow.Keyboard = content;
                 _kbWindow.Show();
             });
-            
+
         }
         public event EventHandler<bool> KeyboardOpenChanged;
         public void HideKeyboard()
