@@ -161,22 +161,22 @@ namespace Panacea.Modules.Keyboard
             {
                 if ((scope.Names as List<InputScopeName>).Any(s => s.NameValue == InputScopeNameValue.EmailUserName))
                 {
-                    ShowKeyboard(_keyboard);
+                    ShowKeyboard(KeyboardType.Normal);
                 }
                 else if ((scope.Names as List<InputScopeName>).Any(s => s.NameValue == InputScopeNameValue.Date))
                 {
                     _dateKeyboard.Init();
-                    ShowKeyboard(_dateKeyboard);
+                    ShowKeyboard(KeyboardType.Date);
                 }
                 else if ((scope.Names as List<InputScopeName>).Any(s => s.NameValue == InputScopeNameValue.Number))
                 {
 
-                    ShowKeyboard(_numberKeyboard);
+                    ShowKeyboard(KeyboardType.Number);
                 }
             }
             else
             {
-                ShowKeyboard(_keyboard);
+                ShowKeyboard(KeyboardType.Normal);
             }
         }
 
@@ -196,7 +196,7 @@ namespace Panacea.Modules.Keyboard
             }
             else
             {
-                ShowKeyboard(_keyboard);
+                ShowKeyboard(KeyboardType.Normal);
             }
         }
 
@@ -207,53 +207,65 @@ namespace Panacea.Modules.Keyboard
             return Task.CompletedTask;
         }
 
-        public void ShowKeyboard(KeyboardType type)
+        public async void ShowKeyboard(KeyboardType type)
         {
+            void ShowKeyboard(FrameworkElement content)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _kbWindow.Keyboard = content;
+                    _kbWindow.Show();
+                });
+
+            }
             switch (type)
             {
                 case KeyboardType.Date:
                     ShowKeyboard(_dateKeyboard);
                     break;
                 case KeyboardType.Number:
-                    ShowKeyboard(_numberKeyboard);
+                    _visible = true;
+                    if (await ShouldShowKeyboard() && _visible)
+                    {
+                        ShowKeyboard(_numberKeyboard);
+                    }
                     break;
                 default:
-                    ShowKeyboard(_keyboard);
+                    _visible = true;
+                    if (await ShouldShowKeyboard() && _visible)
+                    {
+                        ShowKeyboard(_keyboard);
+                    }
                     break;
             }
         }
-        bool _visible = false;
-        internal async void ShowKeyboard(FrameworkElement content)
-        {
-            _visible = true;
-            if (!await Task.Run(() =>
-             {
-                 using (var searcher = new ManagementObjectSearcher("Select DeviceID from Win32_Keyboard"))
-                 {
-                     foreach (ManagementObject keyboard in searcher.Get())
-                     {
-                         var id = keyboard.GetPropertyValue("DeviceID").ToString();
-                         if (!id.Equals("") && !IgnoreKeyboards.Split(';').Any(s => id.Contains(s)))
-                         {
-                             return false;
-                         }
-                     }
-                 }
-                 return true;
-             })) return;
-            if (!_visible) return;
-            //Debug.WriteLine("Showing");
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                _kbWindow.Keyboard = content;
-                _kbWindow.Show();
-            });
 
+        private Task<bool> ShouldShowKeyboard()
+        {
+            return Task.Run(() =>
+            {
+                using (var searcher = new ManagementObjectSearcher("Select DeviceID from Win32_Keyboard"))
+                {
+                    foreach (ManagementObject keyboard in searcher.Get())
+                    {
+                        var id = keyboard.GetPropertyValue("DeviceID").ToString();
+                        if (!id.Equals("") && IgnoreKeyboards.Split(';').Any(s => id.Contains(s)))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
         }
+        bool _visible = false;
+        
         public event EventHandler<bool> KeyboardOpenChanged;
-        public void HideKeyboard()
+        public async void HideKeyboard()
         {
             _visible = false;
+            await Task.Delay(400);
+            if (_visible) return;
             //Debug.WriteLine("Hiding");
             Application.Current.Dispatcher.Invoke(() =>
             {
